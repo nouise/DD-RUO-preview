@@ -13,8 +13,9 @@ SUBSET="imagenette"
 DATA_PATH="/data1/home/ypliu/DSproject/data"
 
 # Stage 2 output (post-quantization). MSE_ERR=5e-7 in test_quantize.sh
-IMAGES_PATH="./results/quantize_test/ImageNet/imagenette/10/smoketest/images_5e-07.pt"
-LABELS_PATH="./results/quantize_test/ImageNet/imagenette/10/smoketest/labels_5e-07.pt"
+# cwd is cross_eval/, so reach into sibling quantize/ for the test_quantize.sh output.
+IMAGES_PATH="../quantize/results/quantize_test/ImageNet/imagenette/10/smoketest/images_5e-07.pt"
+LABELS_PATH="../quantize/results/quantize_test/ImageNet/imagenette/10/smoketest/labels_5e-07.pt"
 
 # Small for smoke test: all 4 README architectures, 1 eval run, 2 training epochs
 MODELS="ResNet18ImageNet,VGG11,AlexNet,ViT"
