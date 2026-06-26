@@ -49,6 +49,17 @@ checkpoints/
 >
 > 如果只需要复现阶段三的跨架构测评结果，下载 `quantized/` 下的 `images.pt` + `labels.pt` 即可。
 
+### Checkpoint 兼容性（旧权重加载）
+
+本仓库早期的压缩主干位于顶层 `ts/` 包，重构后移至 `core/ts/`。受此影响，**重构前保存的 checkpoint**（pickle 里类路径为 `ts.tensor_data_func_v6.*`）在直接 `torch.load` 时会报 `ModuleNotFoundError: No module named 'ts'`。
+
+为此 `core/__init__.py` 内置了一个**向后兼容 shim**：在导入 `core` 时自动把 `core.ts` 整棵子树注册成 `ts` 的别名（`sys.modules['ts...'] → core.ts...`，指向同一份代码，无冗余）。这样：
+
+- **旧 checkpoint**（`ts.*` 路径）→ 经别名自动解析，正常加载；
+- **新 checkpoint**（`core.ts.*` 路径）→ 原生加载。
+
+无需任何手动转换。只要在使用 `torch.load` 前 `import core`（各 `pool_*.py` / `quantize_pool.py` / `cross_evaluate.py` 入口都已 `from core... import`，自动触发）。若日后遇到引用了未覆盖的 `ts.*` 子模块的旧权重，报错信息会指明缺失路径，届时在 `core/__init__.py` 的别名注册处补上即可。
+
 ## 快速开始
 
 下面以 TM 方法为例。DM/DC 只需替换阶段一的入口脚本，阶段二/三完全相同。
