@@ -1,0 +1,96 @@
+{
+  "description": "DD-RUO TM method checkpoints for 6 ImageNet subsets (ipc=102, 128x128)",
+  "model_config": {
+    "layers_v": "v5",
+    "arm": 32,
+    "dim": 4
+  },
+  "cross_eval_config": {
+    "models": ["ResNet18ImageNet", "VGG11", "AlexNet", "ViT"],
+    "lr": 0.02,
+    "epoch_eval_train": 1000,
+    "num_eval": 5
+  },
+  "note": "images.pt and labels.pt can be regenerated from pool.pt via TensorPool.load_slice_pool() + TensorPool.get_data(). See quantize_pool.py for reference.",
+  "subsets": {
+    "imagenette": {
+      "pool": {
+        "file": "pool/imagenette.pt",
+        "original": "imagenette_pool_7000.pt",
+        "training_iterations": 7000
+      },
+      "quantized": {
+        "pool": "quantized/imagenette/pool.pt",
+        "images": "quantized/imagenette/images.pt",
+        "labels": "quantized/imagenette/labels.pt",
+        "mse_threshold": 5e-07
+      }
+    },
+    "imagewoof": {
+      "pool": {
+        "file": "pool/imagewoof.pt",
+        "original": "imagewoof_pool_2000.pt",
+        "training_iterations": 2000
+      },
+      "quantized": {
+        "pool": "quantized/imagewoof/pool.pt",
+        "images": "quantized/imagewoof/images.pt",
+        "labels": "quantized/imagewoof/labels.pt",
+        "mse_threshold": 5e-07
+      }
+    },
+    "imagemeow": {
+      "pool": {
+        "file": "pool/imagemeow.pt",
+        "original": "imagemeow_pool_2000.pt",
+        "training_iterations": 2000
+      },
+      "quantized": {
+        "pool": "quantized/imagemeow/pool.pt",
+        "images": "quantized/imagemeow/images.pt",
+        "labels": "quantized/imagemeow/labels.pt",
+        "mse_threshold": 5e-07
+      }
+    },
+    "imagesquawk": {
+      "pool": {
+        "file": "pool/imagesquawk.pt",
+        "original": "imagesquawk_pool_5000.pt",
+        "training_iterations": 5000
+      },
+      "quantized": {
+        "pool": "quantized/imagesquawk/pool.pt",
+        "images": "quantized/imagesquawk/images.pt",
+        "labels": "quantized/imagesquawk/labels.pt",
+        "mse_threshold": 5e-07
+      }
+    },
+    "imagefruit": {
+      "pool": {
+        "file": "pool/imagefruit.pt",
+        "original": "imagefruit_pool_3000.pt",
+        "training_iterations": 3000
+      },
+      "quantized": {
+        "pool": "quantized/imagefruit/pool.pt",
+        "images": "quantized/imagefruit/images.pt",
+        "labels": "quantized/imagefruit/labels.pt",
+        "mse_threshold": 5e-05,
+        "note": "imagefruit uses a larger mse threshold than other subsets"
+      }
+    },
+    "imageyellow": {
+      "pool": {
+        "file": "pool/imageyellow.pt",
+        "original": "imageyellow_pool_6000.pt",
+        "training_iterations": 6000
+      },
+      "quantized": {
+        "pool": "quantized/imageyellow/pool.pt",
+        "images": "quantized/imageyellow/images.pt",
+        "labels": "quantized/imageyellow/labels.pt",
+        "mse_threshold": 5e-07
+      }
+    }
+  }
+}

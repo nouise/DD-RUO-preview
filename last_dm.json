@@ -1,0 +1,108 @@
+{
+    "imagewoof": {
+        "ipc=96": {
+            "file_path": "/data1/home/ypliu/DSproject/quantize_net/DM/ImageNet/imagewoof/96/TEST_ImageNet_imagewoof_ipc96_32_4_syn40_batch_syn80_save_img/log.txt",
+            "mse": 5e-06,
+            "mean": 0.464000,
+            "std": 0.016781,
+            "final_bpp": 0.806948,
+            "distribution": {
+                "arm": 0.019611,
+                "upsampling": 0.000315,
+                "synthesis": 0.056343,
+                "grids": 0.730679
+            },
+            "ratios": {
+                "arm": "2.430322%",
+                "upsampling": "0.038992%",
+                "synthesis": "6.982240%",
+                "grids": "90.548446%"
+            }
+        }
+    },
+    "imagefruit": {
+        "ipc=96": {
+          "file_path": "/data1/home/ypliu/DSproject/quantize_net/DM/ImageNet/imagefruit/96/TEST_ImageNet_imagefruit_ipc96_32_4_syn40_batch_syn80_save_img_v3/log.txt",
+          "mse": 5e-06,
+          "mean": 0.490000,
+          "std": 0.004561,
+          "final_bpp": 0.854950,
+          "distribution": {
+            "arm": 0.020339,
+            "upsampling": 0.000335,
+            "synthesis": 0.069313,
+            "grids": 0.764962
+          },
+          "ratios": {
+            "arm": "2.379017%",
+            "upsampling": "0.039138%",
+            "synthesis": "8.107268%",
+            "grids": "89.474577%"
+          }
+        }
+      },
+    "imagemeow": {
+        "ipc=96": {
+          "file_path": "/data1/home/ypliu/DSproject/quantize_net/DM/ImageNet/imagemeow/96/TEST_ImageNet_imagemeow_ipc96_32_4_syn40_batch_syn80_save_img_v2/log.txt",
+          "mse": 5e-07,
+          "mean": 0.488400,
+          "std": 0.014165,
+          "final_bpp": 0.891085,
+          "distribution": {
+            "arm": 0.020437,
+            "upsampling": 0.000397,
+            "synthesis": 0.079177,
+            "grids": 0.791074
+          },
+          "ratios": {
+            "arm": "2.293494%",
+            "upsampling": "0.044501%",
+            "synthesis": "8.885504%",
+            "grids": "88.776501%"
+          }
+        }
+      },
+    "imagesquawk": {
+          "ipc=96": {
+            "file_path": "/data1/home/ypliu/DSproject/quantize_net/DM/ImageNet/imagesquawk/96/TEST_ImageNet_imagesquawk_ipc96_32_4_v2_16/log.txt",
+            "mse": 5e-05,
+            "mean": 0.689600,
+            "std": 0.011200,
+            "final_bpp": 0.902308,
+            "distribution": {
+              "arm": 0.020340,
+              "upsampling": 0.000258,
+              "synthesis": 0.046010,
+              "grids": 0.835699
+            },
+            "ratios": {
+              "arm": "2.254265%",
+              "upsampling": "0.028629%",
+              "synthesis": "5.099184%",
+              "grids": "92.617923%"
+            }
+          }
+        },
+    "imagenette": {
+    "ipc=96": {
+      "file_path": "/data1/home/ypliu/DSproject/quantize_net/DM/ImageNet/imagenette/96/TEST_ImageNet_imagenette_ipc96_32_4_v3_run/log.txt",
+      "mse": 5e-07,
+      "mean": 0.719200,
+      "std": 0.008352,
+      "final_bpp": 0.906030,
+      "distribution": {
+        "arm": 0.019613,
+        "upsampling": 0.000447,
+        "synthesis": 0.097716,
+        "grids": 0.788254
+      },
+      "ratios": {
+        "arm": "2.164768%",
+        "upsampling": "0.049359%",
+        "synthesis": "10.785057%",
+        "grids": "87.000816%"
+      }
+    }
+  }
+}
+      

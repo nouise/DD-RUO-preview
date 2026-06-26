@@ -1,0 +1,42 @@
+# Local agent / editor metadata
+.agents/
+.codex/
+.vscode/
+.idea/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+nohup.out
+wandb/
+
+# Generated results / outputs (smoke tests, training runs)
+results/
+*/results/
+*.png
+
+# Temporary artifacts
+*.tmp
+*.bak
+
+# Model weights / checkpoints (kept as empty placeholder dirs; download from HuggingFace)
+*.pt
+*.pth
+*.ckpt
