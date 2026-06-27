@@ -446,6 +446,7 @@ if __name__ == '__main__':
     if not os.path.exists(args.save_path):
         os.mkdir(args.save_path)
 
+
     shutil.copy(f"./scripts/{args.sh_file}", f"{args.save_path}/{args.sh_file}")
     args.log_path = f"{args.save_path}/log.txt"
     save_and_print(args.log_path, f"begin at time: {get_time()}")
