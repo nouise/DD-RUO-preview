@@ -45,3 +45,9 @@ results/
 entropy_codec/bitstream_out/
 entropy_codec/decoded_out/
 entropy_codec/analysis_out/
+
+# Release checkpoints bundle (distributed via HuggingFace, not in repo)
+checkpoints_release/
+
+# Local experiment data snapshot (not a stable interface)
+last_dm.json
