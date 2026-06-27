@@ -41,7 +41,7 @@ from codec_io import write_header, write_bin
 
 
 # ---------- 配置（按需改） ----------
-POOL_PATH = "/data1/home/ypliu/Final_results/TM/pool_4000_meow_dipc=51.pt"
+POOL_PATH = "/path/to/pool.pt"
 OUT_DIR = os.path.join(THIS_DIR, "bitstream_out")
 DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
 LAYERS_V = "v5"
@@ -315,7 +315,5 @@ if __name__ == "__main__":
     MSE_ERR = args.mse_err
     MASK_SIZE = args.mask_size
     LAPLACE_RANGE = args.laplace_range
-    OUT_DIR = args.out_dir
-    main()
     OUT_DIR = args.out_dir
     main()

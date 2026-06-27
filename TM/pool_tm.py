@@ -42,7 +42,6 @@ def main(args):
 
     eval_it_pool = np.arange(0, args.Iteration + 1, args.eval_it).tolist()
     save_and_print(args.log_path,f"eval_it_pool:{eval_it_pool}")
-    print("all",args.__dict__)
     channel, im_size, num_classes, class_names, mean, std, dst_train, dst_test, testloader, loader_train_dict, class_map, class_map_inv = get_dataset(args.dataset, args.data_path, args.batch_real, args.subset, args=args)
     args.channel, args.im_size, args.num_classes, args.mean, args.std = channel, im_size, num_classes, mean, std
     model_eval_pool = get_eval_pool(args.eval_mode, args.model, args.model)
@@ -387,10 +386,10 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Parameter Processing')
 
-    parser.add_argument('--dataset', type=str, default='CIFAR10', help='dataset')
+    parser.add_argument('--dataset', type=str, default='ImageNet', help='dataset')
     parser.add_argument('--subset', type=str, default='imagenette', help='ImageNet subset. This only does anything when --dataset=ImageNet')
-    parser.add_argument('--model', type=str, default='ConvNet', help='model')
-    parser.add_argument('--ipc', type=int, default=1, help='image(s) per class')
+    parser.add_argument('--model', type=str, default='ConvNetD5', help='model')
+    parser.add_argument('--ipc', type=int, default=102, help='image(s) per class')
     parser.add_argument('--eval_mode', type=str, default='S', help='eval_mode, check utils.py for more info')
     parser.add_argument('--num_eval', type=int, default=5, help='how many networks to evaluate on')
     parser.add_argument('--eval_it', type=int, default=500, help='how often to evaluate')
@@ -403,7 +402,7 @@ if __name__ == '__main__':
     parser.add_argument('--dsa_strategy', type=str, default='color_crop_cutout_flip_scale_rotate', help='differentiable Siamese augmentation strategy')
     parser.add_argument('--data_path', type=str, default='../data', help='dataset path')
     parser.add_argument('--buffer_path', type=str, default='../buffers', help='buffer path')
-    parser.add_argument('--zca', type=str,default='True',choices=['True','False'],help="do ZCA whitening")
+    parser.add_argument('--zca', type=str,default='False',choices=['True','False'],help="do ZCA whitening")
     parser.add_argument('--load_all', action='store_true',default=False, help="only use if you can fit all expert trajectories into RAM")
     parser.add_argument('--no_aug', type=bool, default=False, help='this turns off diff aug during distillation')
     parser.add_argument('--max_files', type=int, default=None, help='number of expert files to read (leave as None unless doing ablations)')
@@ -428,13 +427,13 @@ if __name__ == '__main__':
     #parser.add_argument('--lr_freq', type=float)
     #parser.add_argument('--mom_freq', type=float)
     ### TM_POOL ###
-    parser.add_argument('--ldb', type=float,default=0.1)
-    parser.add_argument('--lr_img', type=float,default=0.01)
-    parser.add_argument('--lr_it',help="lr*data_grad,usually 20")
-    parser.add_argument('--ldb_it',help="lr*rt_grad,usually 1")
+    parser.add_argument('--ldb', type=float,default=0.1)  # joint-opt rate coeff (TM); also sets warmup beta=1/ldb
+    parser.add_argument('--lr_img', type=float,default=0.001)
+    parser.add_argument('--lr_it',type=float,default=1000,help="distillation-grad amplifier; numerator of lambda=lr_it/(ldb_it*ldb)")
+    parser.add_argument('--ldb_it',type=float,default=10,help="rate-grad amplifier; TM stage1=10, stage2=150")
     parser.add_argument("--arm",type=int,default=32)
     parser.add_argument("--dim",type=int,default=4)
-    parser.add_argument("--layers_v",type=str,default='v4')
+    parser.add_argument("--layers_v",type=str,default='v5')
 
     args = parser.parse_args()
     set_seed(args.seed)

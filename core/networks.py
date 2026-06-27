@@ -35,7 +35,6 @@ class ConvNet(nn.Module):
         self.classifier = nn.Linear(num_feat, num_classes)
 
     def forward(self, x):
-        # print("MODEL DATA ON: ", x.get_device(), "MODEL PARAMS ON: ", self.classifier.weight.data.get_device())
         out = self.features(x)
         out = out.view(out.size(0), -1)
         out = self.classifier(out)

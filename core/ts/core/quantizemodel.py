@@ -34,7 +34,6 @@ def _quantize_parameters(
         sent_param = torch.round(fp_param[pid] / current_q_step)
 
         if sent_param.abs().max() > MAX_AC_MAX_VAL:
-            #print( f"Sent param {pid} exceed MAX_AC_MAX_VAL! Q step {current_q_step} too small."  )
             return None,None
         q_param.append(sent_param * current_q_step) 
         if is_weight: param_int['weight'].append(sent_param.view(-1))
@@ -160,7 +159,6 @@ def quantize_model_no_ref(op, param,mse_err=0.00005) :
                 bits_base += bits_per_module[pk]
         best_q_step = {}
         final_best_expgol_cnt = {}
-        print(module_name)
         best_q_param=param.pool[name_translate[module_name]]
         for q_step_w, q_step_b in itertools.product(all_q_step.get("weight"), all_q_step.get("bias")):
             # Reset full precision parameters, set the quantization step
@@ -177,7 +175,6 @@ def quantize_model_no_ref(op, param,mse_err=0.00005) :
             y,bits = op.forward_for_test()
             
             mse = torch.mean((y-ref)**2)
-            print(f"module_name{module_name},q_step_W:{q_step_w},q_step_b:{q_step_b},mse:{mse}")
             if mse > mse_err: continue
             best_expgol_cnt = {}
             net_bits = 0
@@ -195,16 +192,12 @@ def quantize_model_no_ref(op, param,mse_err=0.00005) :
        
 
             bpp = (net_bits+bits_base+torch.sum(bits).item())/npixels
-            #print(f"q_step_w,q_step_b,bpp,net_bits,bits_base")
-            print(q_step_w, q_step_b,bpp,net_bits,bits_base,torch.sum(bits).item())
-            
             # Store best quantization steps
             if bpp < best_loss:
                 best_loss = bpp
                 best_q_step = current_q_step
                 final_best_expgol_cnt = best_expgol_cnt
                 bits_per_module[module_name] = net_bits
-                print(f"new bpp {bpp},and {bits_per_module},mse:{mse},and ratio is {(torch.sum(bits).item()*100/npixels)/bpp}%")
                 simple_latents=torch.sum(bits).item()/npixels
                 final_mse=mse
                 print(q_step_w, q_step_b,bpp,net_bits,bits_base)
@@ -304,24 +297,11 @@ def quantize_model_no_ref_v2(op, param,mse_err=0.00005) :
                 best_q_step = current_q_step
                 final_best_expgol_cnt = best_expgol_cnt
                 bits_per_module[module_name] = net_bits
-            #    print(f"new bpp {bpp},and {bits_per_module},mse:{mse},and ratio is {(torch.sum(bits).item()*100/npixels)/bpp}%")
                 simple_latents=torch.sum(bits).item()/npixels
                 final_mse=mse
-             #   print(q_step_w, q_step_b,bpp,net_bits,bits_base)
                 best_q_param=q_param
-                # if module_name=="synthesis":
-                #     print(fp_param[0][0],fp_param[0].shape)
-                #     print(q_param[0][0])
-                #     print(param_int['weight'][0][:6])
-                #     print(f"q_step_w,q_step_b:{q_step_w},{q_step_b}")
         param.pool[name_translate[module_name]]=best_q_param
-        #compare_two_nets(fp_param,param.pool[name_translate[module_name]],module_name)
-        #compare_two_nets(best_q_param,param.pool[name_translate[module_name]],f"{module_name}_best_q_param")
         quant_param[module_name] = {'best_q_step':best_q_step,'final_best_expgol_cnt':final_best_expgol_cnt}
-    #print(f"before_bpp{simple_latents},final bpp{best_loss};ratio:{(simple_latents/best_loss)*100}")   
-    #print("quant_param:",quant_param)
-    #print(f"before:{before_bits_per_module}")
-    #print(f"after:{bits_per_module}")
     result_distribution={}
     for module_name, bits in bits_per_module.items():
         result_distribution[module_name]=bits/npixels
@@ -329,13 +309,4 @@ def quantize_model_no_ref_v2(op, param,mse_err=0.00005) :
     for op in ['ap','up','sp']:
         for i, param_single in enumerate(param.pool[op]):
                         param_single.requires_grad = True
-                        # print(f"{i}th,shape:{param_single.shape},grad:{param_single.requires_grad}")
-    #print(f"after:{result_distribution}")
-    #print(f"param.pool.keys:{param.pool.keys()}")
-    '''
-    time_nn_quantization = time.time() - start_time
-    op.set_param(param)
-    y,bits = op.forward_for_test()
-    mse = torch.mean((y-ref)**2)
-    '''
     return best_loss,result_distribution,quant_param

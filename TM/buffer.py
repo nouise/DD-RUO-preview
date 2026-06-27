@@ -31,7 +31,6 @@ def main(args):
     if not args.zca:
         args.log_path += "_NO_ZCA"
     args.log_path += f"_{args.model}.txt"
-    print(args.data_path)
     channel, im_size, num_classes, class_names, mean, std, dst_train, dst_test, testloader, loader_train_dict, class_map, class_map_inv = get_dataset(args.dataset, args.data_path, args.batch_real, args.subset, args=args)
 
     save_and_print(args.log_path, f'Hyper-parameters: {args.__dict__}')

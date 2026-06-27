@@ -28,12 +28,12 @@ def main():
 
     parser = argparse.ArgumentParser(description='Parameter Processing')
     parser.add_argument('--method', type=str, default='DM', help='DC/DSA/DM')
-    parser.add_argument('--dataset', type=str, default='CIFAR10', help='dataset')
+    parser.add_argument('--dataset', type=str, default='ImageNet', help='dataset')
     parser.add_argument('--subset', type=str, default='imagenette', help='ImageNet subset. This only does anything when --dataset=ImageNet')
     parser.add_argument('--res', type=int, default=128, help='resolution for imagenet')
     parser.add_argument('--zca', type=str,default='False',choices=['True','False'],help="do ZCA whitening")
-    parser.add_argument('--model', type=str, default='ConvNet', help='model')
-    parser.add_argument('--ipc', type=int, default=1, help='image(s) per class')
+    parser.add_argument('--model', type=str, default='ConvNetD5', help='model')
+    parser.add_argument('--ipc', type=int, default=96, help='image(s) per class')
     parser.add_argument('--eval_mode', type=str, default='S', help='eval_mode') # S: the same to training model, M: multi architectures,  W: net width, D: net depth, A: activation function, P: pooling layer, N: normalization layer,
     parser.add_argument('--num_exp', type=int, default=1, help='the number of experiments')
     parser.add_argument('--num_eval', type=int, default=10, help='the number of evaluating randomly initialized models')
@@ -54,13 +54,13 @@ def main():
     parser.add_argument('--FLAG', type=str, default="TEST")
 
     parser.add_argument('--batch_syn', type=int)
-    parser.add_argument('--ldb', type=float,default=0.1)
-    parser.add_argument('--lr_img', type=float,default=0.01)
-    parser.add_argument('--lr_it',type=float,help="lr*data_grad,usually 20")
-    parser.add_argument('--ldb_it',type=float,help="lr*rt_grad,usually 1")
+    parser.add_argument('--ldb', type=float,default=5)  # joint-opt rate coeff (DM); warmup beta uses a separate ldb=1e-6 run
+    parser.add_argument('--lr_img', type=float,default=0.001)
+    parser.add_argument('--lr_it',type=float,default=1000,help="distillation-grad amplifier; numerator of lambda=lr_it/(ldb_it*ldb)")
+    parser.add_argument('--ldb_it',type=float,default=300,help="rate-grad amplifier; DM stage1=10/50, stage2=300")
     parser.add_argument("--arm",type=int,default=32)
     parser.add_argument("--dim",type=int,default=4)
-    parser.add_argument("--layers_v",type=str,default='v4')
+    parser.add_argument("--layers_v",type=str,default='v6')
     args = parser.parse_args()
     set_seed(args.seed)
 

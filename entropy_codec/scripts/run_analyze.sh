@@ -7,7 +7,7 @@
 cd "$(dirname "$0")/.."
 
 # ============ 配置（按需修改） ============
-POOL_PATH="/data1/home/ypliu/Final_results/TM/pool_4000_meow_dipc=51.pt"
+POOL_PATH="/path/to/pool.pt"
 BITSTREAM_DIR="./bitstream_out"
 ANALYSIS_DIR="./analysis_out"
 CUDA_ID=6

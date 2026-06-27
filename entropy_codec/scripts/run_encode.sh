@@ -6,13 +6,13 @@
 cd "$(dirname "$0")/.."
 
 # ============ 配置（按需修改） ============
-POOL_PATH="/data1/home/ypliu/Final_results/TM/pool_4000_meow_dipc=51.pt"
+POOL_PATH="/path/to/pool.pt"
 SLICE_INDEX=0            # 取第几个 slice
 LAYERS_V="v5"            # 必须与 pool 训练参数一致
 ARM_DIM=32
 N_HIDDEN_ARM=4
 MSE_ERR=0.0000005        # quantize_net 的 MSE 阈值
-MASK_SIZE=9              # TM 项目=9（DM_new 是 13，二者不同！用错 bpp 暴涨）
+MASK_SIZE=9              # 必须与 pool 训练时的 mask_size 一致
 LAPLACE_RANGE=60         # constriction QuantizedLaplace 支撑区间 [-60,60]，需 > |sent|.max()
 CUDA_ID=6
 # =========================================

@@ -240,15 +240,11 @@ def get_dataset(dataset, data_path, batch_size=1, subset="imagenette", args=None
                                             transforms.Normalize(mean=mean, std=std),
                                             transforms.Resize(im_size),
                                             transforms.CenterCrop(im_size)])
-        print("begin_solve:",dataset)
-        print(data_path)
         dst_train = datasets.ImageNet(data_path, split="train", transform=transform) # no augmentation
-        print("after get_train")
         dst_train_dict = {c : torch.utils.data.Subset(dst_train, np.squeeze(np.argwhere(np.equal(dst_train.targets, config.img_net_classes[c])))) for c in range(len(config.img_net_classes))}
         dst_train = torch.utils.data.Subset(dst_train, np.squeeze(np.argwhere(np.isin(dst_train.targets, config.img_net_classes))))
         loader_train_dict = {c : torch.utils.data.DataLoader(dst_train_dict[c], batch_size=batch_size, shuffle=True, num_workers=32) for c in range(len(config.img_net_classes))}
         dst_test = datasets.ImageNet(data_path, split="val",transform=transform)
-        print("after_get test")
         dst_test = torch.utils.data.Subset(dst_test, np.squeeze(np.argwhere(np.isin(dst_test.targets, config.img_net_classes))))
         for c in range(len(config.img_net_classes)):
             dst_test.dataset.targets[dst_test.dataset.targets == config.img_net_classes[c]] = c

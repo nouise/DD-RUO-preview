@@ -70,7 +70,6 @@ class DPParams(MParams):
 
 
 
-import pdb
 class CoolChicEncoder(nn.Module):
 
     def __init__(self, param: CoolChicEncoderParameter):
@@ -98,33 +97,19 @@ class CoolChicEncoder(nn.Module):
         noise_parameter: Optional[float] = 1.0,
         AC_MAX_VAL: int = -1,
     ) -> Tuple[Tensor,Tensor]:
-        #pdb.set_trace()
-        
-            #print(len(latent_grids))
-            size_per_latent_flat = [latent_i.numel() for latent_i in latent_grids]
-            size_per_latent = [latent_i.shape for latent_i in latent_grids]
-            encoder_side_flat_latent = torch.cat([latent_i.view(-1) for latent_i in latent_grids]).contiguous()
-            flat_decoder_side_latent = quantize(encoder_side_flat_latent * self.encoder_gains,   quantizer_noise_type if self.training else "none",  quantizer_type if self.training else "hardround", soft_round_temperature, noise_parameter, )
-            #breakpoint()
-            #print("after quantize:",type(flat_decoder_side_latent))
-            if AC_MAX_VAL != -1:  flat_decoder_side_latent = torch.clamp(flat_decoder_side_latent, -AC_MAX_VAL, AC_MAX_VAL + 1)
-            decoder_side_latent = [ts.view(sz) for ts,sz in zip(torch.split(flat_decoder_side_latent,size_per_latent_flat),size_per_latent)]
-            #print("after get split",type(decoder_side_latent))
-            #self.non_zero_pixel_ctx_index = self.non_zero_pixel_ctx_index.to(flat_decoder_side_latent.device)
-            flat_context = torch.cat([ _get_neighbor(spatial_latent_i, self.mask_size, self.non_zero_pixel_ctx_index)   for spatial_latent_i in decoder_side_latent ],  dim=0)
-            flat_latent = flat_decoder_side_latent
-            flat_mu, flat_scale, _ = self.arm(flat_context,arm_param)
-            #print("after arm")
-            proba = torch.clamp_min( _laplace_cdf(flat_latent + 0.5, flat_mu, flat_scale) - _laplace_cdf(flat_latent - 0.5, flat_mu, flat_scale),   min=2**-16, )
-            flat_rate = -torch.log2(proba)
-            #print("After:calculate flat_rate")
-            try:
-                #print(syn_param)
-                synthesis_output = self.synthesis(self.upsampling(decoder_side_latent,upsampling_param),syn_param)
-            except Exception as e:
-                print("error occurs:forward")
-                print(str(e))
-            return synthesis_output,  flat_rate
+        size_per_latent_flat = [latent_i.numel() for latent_i in latent_grids]
+        size_per_latent = [latent_i.shape for latent_i in latent_grids]
+        encoder_side_flat_latent = torch.cat([latent_i.view(-1) for latent_i in latent_grids]).contiguous()
+        flat_decoder_side_latent = quantize(encoder_side_flat_latent * self.encoder_gains,   quantizer_noise_type if self.training else "none",  quantizer_type if self.training else "hardround", soft_round_temperature, noise_parameter, )
+        if AC_MAX_VAL != -1:  flat_decoder_side_latent = torch.clamp(flat_decoder_side_latent, -AC_MAX_VAL, AC_MAX_VAL + 1)
+        decoder_side_latent = [ts.view(sz) for ts,sz in zip(torch.split(flat_decoder_side_latent,size_per_latent_flat),size_per_latent)]
+        flat_context = torch.cat([ _get_neighbor(spatial_latent_i, self.mask_size, self.non_zero_pixel_ctx_index)   for spatial_latent_i in decoder_side_latent ],  dim=0)
+        flat_latent = flat_decoder_side_latent
+        flat_mu, flat_scale, _ = self.arm(flat_context,arm_param)
+        proba = torch.clamp_min( _laplace_cdf(flat_latent + 0.5, flat_mu, flat_scale) - _laplace_cdf(flat_latent - 0.5, flat_mu, flat_scale),   min=2**-16, )
+        flat_rate = -torch.log2(proba)
+        synthesis_output = self.synthesis(self.upsampling(decoder_side_latent,upsampling_param),syn_param)
+        return synthesis_output,  flat_rate
     
     def forward_per_sample(self,
         latent_grids,  arm_param:nn.ParameterList,  upsampling_param:nn.ParameterList,  syn_param:nn.ParameterList,
@@ -133,14 +118,12 @@ class CoolChicEncoder(nn.Module):
         soft_round_temperature: Optional[float] = 0.3,
         noise_parameter: Optional[float] = 1.0,AC_MAX_VAL: int = -1,
     ) -> Tuple[Tensor,Tensor]:
-        #print('here forward')
         size_per_latent_flat = [latent_i.numel() for latent_i in latent_grids]
         size_per_latent = [latent_i.shape for latent_i in latent_grids]
         encoder_side_flat_latent = torch.cat([latent_i.view(-1) for latent_i in latent_grids]).contiguous()
         flat_decoder_side_latent = quantize(encoder_side_flat_latent * self.encoder_gains,   quantizer_noise_type,  quantizer_type, soft_round_temperature, noise_parameter, noise_out=noise)
         if AC_MAX_VAL != -1:  flat_decoder_side_latent = torch.clamp(flat_decoder_side_latent, -AC_MAX_VAL, AC_MAX_VAL + 1)
         decoder_side_latent = [ts.view(sz) for ts,sz in zip(torch.split(flat_decoder_side_latent,size_per_latent_flat),size_per_latent)]
-        #self.non_zero_pixel_ctx_index = self.non_zero_pixel_ctx_index.to(flat_decoder_side_latent.device)
         flat_context = torch.cat([ _get_neighbor(spatial_latent_i, self.mask_size, self.non_zero_pixel_ctx_index)   for spatial_latent_i in decoder_side_latent ],  dim=0)
         flat_latent = flat_decoder_side_latent
         flat_mu, flat_scale, _ = self.arm(flat_context,arm_param)
