@@ -338,4 +338,4 @@ def quantize_model_no_ref_v2(op, param,mse_err=0.00005) :
     y,bits = op.forward_for_test()
     mse = torch.mean((y-ref)**2)
     '''
-    return best_loss,result_distribution
+    return best_loss,result_distribution,quant_param

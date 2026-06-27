@@ -40,3 +40,8 @@ results/
 *.pt
 *.pth
 *.ckpt
+
+# entropy_codec generated bitstreams / decoded outputs / analysis
+entropy_codec/bitstream_out/
+entropy_codec/decoded_out/
+entropy_codec/analysis_out/

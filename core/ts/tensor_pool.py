@@ -50,7 +50,10 @@ def run_model_test(model: TensorData, param_device, target_device):
 
 
 def run_quantize_net(model: TensorData, param, mse_err, param_device):
-    bpp, components = quantize_model_no_ref_v2(model, param, mse_err=mse_err)
+    # quantize_model_no_ref_v2 returns (best_loss, result_distribution, quant_param);
+    # the main pipeline only needs bpp + components, so quant_param is dropped here.
+    # entropy_codec/encode_v2.py uses the same call and keeps quant_param for the header.
+    bpp, components, _quant_param = quantize_model_no_ref_v2(model, param, mse_err=mse_err)
     model.to(param_device)
     return bpp, components
 
