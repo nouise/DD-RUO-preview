@@ -1,7 +1,7 @@
 #!/bin/bash
-# entropy_codec — 编码：pool.pt → bitstream (B 方案 ARM 因果 + constriction 流式 CABAC)
+# entropy_codec — 编码：pool.pt → bitstream（ARM 因果 + constriction 流式 CABAC）
 # 用法：修改下方配置后 bash scripts/run_encode.sh
-# 依赖：torchac + constriction（c3_2 环境已装）。见 README.md。
+# 依赖：torchac + constriction。见 README.md。
 
 cd "$(dirname "$0")/.."
 

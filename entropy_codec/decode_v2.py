@@ -1,10 +1,8 @@
 """
-decode_v2.py — 解码端 (encoder_v2, B 方案，优化版)
+decode_v2.py — 解码端
 
-与 decode.py 的区别：用预计算 context lookup + 单向量 ARM 替代每像素全图 _get_neighbor。
-L0 从 ~30s/图 → ~1s/图，51 张全量从 ~25 分钟 → ~1 分钟。
-
-用法同 decode.py：cd TM/encoder_v2 && python decode_v2.py
+读码流目录 → 解码网络权重与 latent（ARM + constriction 流式 CABAC）→ 合成图像 → 写到 OUT_DIR/。
+用法见 README.md / scripts/run_decode.sh。
 """
 import os, sys, math, time
 import numpy as np

@@ -2,7 +2,7 @@
 # entropy_codec — 分析：原 pool vs 码流 vs 解码结果（bpp / PSNR / max_abs_diff / 对比图）
 # 用法：修改下方配置后 bash scripts/run_analyze.sh
 # 前置：已跑过 run_encode.sh（产出 bitstream_out/）；若 decoded_out/decoded.pt 不存在会自动解码一次。
-# 依赖：torchac + constriction（c3_2 环境已装）。见 README.md。
+# 依赖：torchac + constriction。见 README.md。
 
 cd "$(dirname "$0")/.."
 

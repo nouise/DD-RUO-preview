@@ -1,8 +1,8 @@
 """
-encode.py — 编码端 (encoder_v2, B 方案：ARM 因果 + constriction 流式 CABAC)
+encode.py — 编码端
 
 读 pool.pt → 取一个 slice → quantize_net → 提取 sent_params →
-constriction 流式编码 latent + torchac 编码网络 → 写到 OUT_DIR/
+熵编码 latent（ARM + constriction 流式 CABAC）+ 编码网络权重 → 写到 OUT_DIR/
 
 输入：
     POOL_PATH    pool .pt 文件
@@ -10,7 +10,7 @@ constriction 流式编码 latent + torchac 编码网络 → 写到 OUT_DIR/
 
 输出（OUT_DIR）：
     header.bin                       纯二进制元信息（含 mask_size, ARM 配置等）
-    latent_l{0..n_grids-1}.bin       每个 grid level 一个码流（B 方案：所有 batch 张图按顺序拼成单一流）
+    latent_l{0..n_grids-1}.bin       每个 grid level 一个码流（所有 batch 张图按顺序拼成单一流）
     nn_arm_weight.bin / nn_arm_bias.bin
     nn_upsampling_weight.bin / nn_upsampling_bias.bin
     nn_synthesis_weight.bin / nn_synthesis_bias.bin
@@ -50,8 +50,7 @@ N_HIDDEN_ARM = 4
 MSE_ERR = 5e-7
 SLICE_INDEX = 0
 
-# B 方案专用常量
-MASK_SIZE = 9            # TM 项目 CoolChicEncoder 的 mask_size（DM_new 是 13，二者不同！）
+MASK_SIZE = 9            # ARM context mask 边长，必须与 pool 训练时的 mask_size 一致
 LAPLACE_RANGE = 60       # constriction.QuantizedLaplace 的整数支撑区间 [-60, 60]
 SCALE_FLOOR = 1e-6       # ARM 输出 scale 的下限
 
@@ -166,7 +165,7 @@ def main():
         print(f"    {mod_name:11s}: w n={sw.numel():6d}  b n={sb.numel():4d}  "
               f"q_step(w)={float(qs['weight']):.6f}  q_step(b)={float(qs['bias']):.6f}")
 
-    # [4] 取 grids 各 level 的 sent_int（B 方案直接保留 (batch, 1, H, W) 维度）
+    # [4] 取 grids 各 level 的 sent_int（保留 (batch, 1, H, W) 维度）
     print(f"\n[4] computing latent sent (per-level, keep batch dim) ...")
     op.set_to_eval()
     encoder_gain = op.gen.encoder_gains
@@ -174,7 +173,7 @@ def main():
         sent_per_level = []
         for g in dp.pool["grids"]:
             sent_l = torch.round(g.detach() * encoder_gain)
-            # 边界保护：超出 LAPLACE_RANGE 直接断言（B 方案 constriction 模型支撑区间是 ±60）
+            # 边界保护：超出 LAPLACE_RANGE 直接断言（constriction 模型支撑区间是 ±60）
             if sent_l.abs().max().item() > LAPLACE_RANGE:
                 raise ValueError(
                     f"latent sent exceeds LAPLACE_RANGE={LAPLACE_RANGE}: "
@@ -193,7 +192,7 @@ def main():
     ap = nn.ParameterList([
         nn.Parameter(p.detach().cpu(), requires_grad=False) for p in dp.pool["ap"]
     ])
-    # [5] 编码 latent（B v2: 逐像素单向量 ARM，与 decode_v2 浮点路径完全一致）
+    # [5] 编码 latent（逐像素单向量 ARM，与 decode_v2 浮点路径完全一致）
     print(f"\n[5] encoding latent per-level (B v2: per-pixel ARM) -> {OUT_DIR}/")
     file_records = []
     laplace_model = constriction.stream.model.QuantizedLaplace(-LAPLACE_RANGE, LAPLACE_RANGE)

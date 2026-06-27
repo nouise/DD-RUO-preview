@@ -1,10 +1,10 @@
 """
-header.bin 二进制布局（little-endian） — encoder_v2 (B 方案: ARM 流式 CABAC)
+header.bin 二进制布局（little-endian）
 
-与 v1 (encoder/) 的区别：
-  - 删除每 grid level 的 (lo, hi, mu, sigma) — B 方案 ARM 现场算，不需要预存
-  - 新增 mask_size: uint8 (ARM context mask 边长，TM 项目里=9)
-  - Magic 改为 "TMC2"
+说明：
+  - 不预存每 grid level 的 (lo, hi, mu, sigma)，ARM 解码时现场计算
+  - mask_size: uint8（ARM context mask 边长，需与 pool 训练时一致）
+  - Magic = "TMC2"
 
 Layout
 ------
@@ -15,12 +15,12 @@ batch         uint16                          2B
 H, W          uint16, uint16                  4B
 arm_dim       uint16                          2B
 n_hidden_arm  uint8                           1B
-mask_size     uint8                           1B    （新增，B 方案 ARM 必需）
+mask_size     uint8                           1B    （ARM context mask 边长）
 layers_v      pascal-string (uint8 len + bytes)
 encoder_gain  float32                         4B
 n_grids       uint8                           1B
   for each grid: B,C,H,W  uint16×4            8B
-  (B 方案下不再存每 level 的统计量，ARM 现场算)
+  (不存每 level 的统计量，ARM 解码时现场算)
 n_modules     uint8                           1B  (=3)
   for each module:
     name      pascal-string
@@ -96,7 +96,7 @@ def write_header(path, header):
         # 期望 4 维 (B,C,H,W)
         for d in sh:
             _w_u16(buf, int(d))
-    # B 方案不存 latent_levels 统计量
+    # 不存 latent_levels 统计量
 
     modules = header["modules"]  # list of dicts
     _w_u8(buf, len(modules))
@@ -154,7 +154,7 @@ def read_header(path):
     for _ in range(n_grids):
         grids.append((_r_u16(buf), _r_u16(buf), _r_u16(buf), _r_u16(buf)))
     h["latent_shapes"] = grids
-    # B 方案不再读 latent_levels
+    # 不读 latent_levels
 
     n_modules = _r_u8(buf)
     modules = []

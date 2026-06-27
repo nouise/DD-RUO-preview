@@ -1,8 +1,8 @@
 #!/bin/bash
 # entropy_codec — 解码：bitstream → decoded.pt + 合成图像 PNG
 # 用法：修改下方配置后 bash scripts/run_decode.sh
-# 注意：逐像素流式解码，51 张 128×128 约需 30+ 分钟（L0 最慢）。调试可设 N_IMAGES=2。
-# 依赖：torchac + constriction（c3_2 环境已装）。见 README.md。
+# 注意：逐像素流式解码较慢，调试可设 N_IMAGES=2 只解前几张。
+# 依赖：torchac + constriction。见 README.md。
 
 cd "$(dirname "$0")/.."
 
