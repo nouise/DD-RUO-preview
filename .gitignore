@@ -55,3 +55,7 @@ last_dm.json
 
 # Local-only working notes (not for release)
 DEADCODE_NOTES.md
+CLAUDE.md
+
+# Internal ModelScope upload helper (not for release)
+upload_modelscope.py
