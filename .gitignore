@@ -51,3 +51,6 @@ checkpoints_release/
 
 # Local experiment data snapshot (not a stable interface)
 last_dm.json
+
+# Local-only working notes (not for release)
+DEADCODE_NOTES.md

@@ -31,7 +31,7 @@ conda activate sre2l
 - `λ` — 联合优化阶段的率-效用权衡（两阶段）
 - 解码器版本 / 熵网络上下文大小 / slice size — 压缩网络结构
 
-各数据集、各蒸馏损失下的详细取值见论文，逐实验的真实配置见 [`paper_configs/`](paper_configs/README.md)。
+各数据集、各蒸馏损失下的详细取值见论文，逐实验的真实启动脚本、日志位置与权重映射见 [`checkpoints_release/`](checkpoints_release/README.md)。
 
 ## Usage
 三种蒸馏损失共享同一条压缩链路，区别仅在蒸馏训练入口；脚本中 `pool_path=init` 时会自动完成 Initialization（warm-up）。
