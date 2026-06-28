@@ -62,3 +62,7 @@ upload_modelscope.py
 
 # Local-only quantized-weights lookup prompt (not for release)
 find_quantized_weights_prompt.md
+
+# entropy_codec additional run outputs
+entropy_codec/bitstream_origin/
+entropy_codec/bitstream_quant/
