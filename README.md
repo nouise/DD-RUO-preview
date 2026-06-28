@@ -1,5 +1,7 @@
 # Dataset Distillation as Data Compression (DD-RUO) [ICCV 2025]
 
+**[English](README_EN.md) | 简体中文**
+
 本仓库是论文 **Dataset Distillation as Data Compression: A Rate-Utility Perspective**（ICCV 2025）的官方 PyTorch 实现。
 
 | [论文](https://openaccess.thecvf.com/content/ICCV2025/papers/Bao_Dataset_Distillation_as_Data_Compression_A_Rate-Utility_Perspective_ICCV_2025_paper.pdf) | [项目主页](https://github.com/nouise/DD-RUO) | [预训练](#预训练权重) |
@@ -31,7 +33,7 @@ conda activate sre2l
 - `λ` — 联合优化阶段的率-效用权衡（两阶段）
 - 解码器版本 / 熵网络上下文大小 / slice size — 压缩网络结构
 
-各数据集、各蒸馏损失下的详细取值见论文，逐实验的真实启动脚本、日志位置与权重映射见 [`checkpoints_release/`](checkpoints_release/README.md)。
+各数据集、各蒸馏损失下的详细取值见论文，逐实验的真实启动脚本、日志位置与权重映射随权重发布在 ModelScope 仓库内的 [`checkpoints_release/`](https://www.modelscope.cn/models/yiping03/dd-ruo0)。
 
 > **关于为何有这么多 β / λ 取值**：论文中每个配置的 β / λ 都是为了**严格满足对应的码率预算（bpc）**而单独调过的。实际使用时通常无需如此——**按脚本中的推荐默认值即可获得很好的效果**；只有当你需要卡某个特定的 bpc 预算时才需要调 λ（λ 越大越偏重效用、码率越松，λ 越小码率越紧）。
 
