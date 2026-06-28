@@ -4,7 +4,7 @@
 
 本仓库是论文 **Dataset Distillation as Data Compression: A Rate-Utility Perspective**（ICCV 2025）的官方 PyTorch 实现。
 
-| [论文](https://openaccess.thecvf.com/content/ICCV2025/papers/Bao_Dataset_Distillation_as_Data_Compression_A_Rate-Utility_Perspective_ICCV_2025_paper.pdf) | [项目主页](https://github.com/nouise/DD-RUO) | [预训练](#预训练权重) |
+| [论文](https://openaccess.thecvf.com/content/ICCV2025/papers/Bao_Dataset_Distillation_as_Data_Compression_A_Rate-Utility_Perspective_ICCV_2025_paper.pdf) | [项目主页](https://github.com/nouise/DD-RUO) | [训练权重](#预训练权重) |
 
 ## Overview
 <!-- ![Teaser image](overview.png) -->
@@ -12,7 +12,7 @@
 
 ## 代码结构
 ```
-core/           共享库（三方法共用一份）：图像压缩主干 TensorPool（latent + 熵网络 + 解码器）+ 工具与网络定义
+core/           共享库（三方法共用一份）：图像表征主干 TensorPool（latent + 熵网络 + 解码器）+ 工具与网络定义
 TM/             Trajectory Matching：蒸馏训练入口 pool_tm.py + expert trajectory 生成 buffer.py + scripts/
 DM/             Distribution Matching：蒸馏训练入口 pool_dm.py + scripts/
 DC/             Gradient Matching（论文中称 GM）：蒸馏训练入口 pool_dc.py + scripts/
@@ -20,12 +20,12 @@ quantize/       阶段二·后量化（三方法共享）：quantize_pool.py + s
 cross_eval/     阶段三·多架构测评（三方法共享）：cross_evaluate.py + scripts/
 entropy_codec/  实际比特流编解码与码率分析：encode_v2.py / decode_v2.py / analyze.py + scripts/
 ```
-> 三种蒸馏损失共享同一条 TensorPool 压缩链路，差异仅在蒸馏训练入口（`pool_*.py`）；`quantize/` 与 `cross_eval/` 与蒸馏方法无关，任意方法产出的 pool 都可直接使用。
+> 三种蒸馏损失共享同一条 TensorPool 链路，差异仅在蒸馏训练入口（`pool_*.py`）；`quantize/` 与 `cross_eval/` 与蒸馏方法无关，任意方法产出的 pool 都可直接使用。
 
 ## Requirements
 ```
 conda env create -f TM/scripts/environment.yml
-conda activate sre2l
+conda activate dd_ruo
 ```
 
 ## Dataset
@@ -47,10 +47,8 @@ conda activate sre2l
 
 各数据集、各蒸馏损失下的详细取值见论文，逐实验的真实启动脚本、日志位置与权重映射随权重发布在 ModelScope 仓库内的 [`checkpoints_release/`](https://www.modelscope.cn/models/yiping03/dd-ruo0)。
 
-> **关于为何有这么多 β / λ 取值**：论文中每个配置的 β / λ 都是为了**严格满足对应的码率预算（bpc）**而单独调过的。实际使用时通常无需如此——**按脚本中的推荐默认值即可获得很好的效果**；只有当你需要卡某个特定的 bpc 预算时才需要调 λ（λ 越大越偏重效用、码率越松，λ 越小码率越紧）。
-
 ## Usage
-三种蒸馏损失共享同一条压缩链路，区别仅在蒸馏训练入口；脚本中 `pool_path=init` 时会自动完成 Initialization（warm-up）。
+三种蒸馏损失共享同一条图像表征链路，区别仅在蒸馏训练入口；脚本中 `pool_path=init` 时会自动完成 Initialization（warm-up）。
 
 ### TM（默认）
 TM 需要先生成 expert trajectories：
@@ -110,7 +108,7 @@ snapshot_download('yiping03/dd-ruo0')
 
 ## Acknowledgement
 本仓库的实现建立在以下工作之上：
-- *C3: High-performance and low-complexity neural compression (Cool-Chic)* — 压缩主干（latent + 熵网络 + 解码器） — [Code](https://github.com/Orange-OpenSource/Cool-Chic)
+- *C3: High-performance and low-complexity neural compression (Cool-Chic)*  — [Code](https://github.com/Orange-OpenSource/Cool-Chic)
 - *Frequency Domain-based Dataset Distillation (FreD)*, NeurIPS 2023 — [Code](https://github.com/sdh0818/FreD)
 - *Distilling Dataset into Neural Field (DDiF)*, ICLR 2025 — [Code](https://github.com/aailab-kaist/DDiF)
 - *Dataset Condensation with Gradient Matching / Distribution Matching* — [Code](https://github.com/VICO-UoE/DatasetCondensation)

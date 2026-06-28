@@ -4,7 +4,7 @@
 
 This repository is the official PyTorch implementation of the paper **Dataset Distillation as Data Compression: A Rate-Utility Perspective** (ICCV 2025).
 
-| [Paper](https://openaccess.thecvf.com/content/ICCV2025/papers/Bao_Dataset_Distillation_as_Data_Compression_A_Rate-Utility_Perspective_ICCV_2025_paper.pdf) | [Project page](https://github.com/nouise/DD-RUO) | [Pretrained](#pretrained-weights) |
+| [Paper](https://openaccess.thecvf.com/content/ICCV2025/papers/Bao_Dataset_Distillation_as_Data_Compression_A_Rate-Utility_Perspective_ICCV_2025_paper.pdf) | [Project page](https://github.com/nouise/DD-RUO) | [Weights](#pretrained-weights) |
 
 ## Overview
 <!-- ![Teaser image](overview.png) -->
@@ -12,7 +12,7 @@ This repository is the official PyTorch implementation of the paper **Dataset Di
 
 ## Repository structure
 ```
-core/           shared library (one copy for all three methods): the TensorPool compression backbone (latent + entropy network + decoder) + utils and network definitions
+core/           shared library (one copy for all three methods): the TensorPool representation backbone (latent + entropy network + decoder) + utils and network definitions
 TM/             Trajectory Matching: distillation entry pool_tm.py + expert-trajectory generation buffer.py + scripts/
 DM/             Distribution Matching: distillation entry pool_dm.py + scripts/
 DC/             Gradient Matching (called GM in the paper): distillation entry pool_dc.py + scripts/
@@ -20,12 +20,12 @@ quantize/       Stage 2 · post-quantization (shared by all three methods): quan
 cross_eval/     Stage 3 · cross-architecture evaluation (shared): cross_evaluate.py + scripts/
 entropy_codec/  the actual bitstream encode/decode & rate analysis: encode_v2.py / decode_v2.py / analyze.py + scripts/
 ```
-> The three distillation losses share one TensorPool compression pipeline; they differ only in the distillation entry point (`pool_*.py`). `quantize/` and `cross_eval/` are independent of the distillation method — a pool produced by any method can be used directly.
+> The three distillation losses share one TensorPool pipeline; they differ only in the distillation entry point (`pool_*.py`). `quantize/` and `cross_eval/` are independent of the distillation method — a pool produced by any method can be used directly.
 
 ## Requirements
 ```
 conda env create -f TM/scripts/environment.yml
-conda activate sre2l
+conda activate dd_ruo
 ```
 
 ## Dataset
@@ -47,10 +47,8 @@ Main hyperparameters:
 
 Detailed values for each dataset and each distillation loss are in the paper; the exact per-experiment launch scripts, log locations and weight mapping are released together with the weights, under [`checkpoints_release/`](https://www.modelscope.cn/models/yiping03/dd-ruo0) in the ModelScope repo.
 
-> **Why are there so many β / λ values?** In the paper, the β / λ of every configuration was tuned individually to **strictly meet its corresponding bit-rate budget (bpc)**. In practice this is usually unnecessary — **the recommended default values in the scripts already give strong results**; you only need to tune λ when you must hit a specific bpc budget (a larger λ favors utility and loosens the bit-rate, a smaller λ tightens it).
-
 ## Usage
-The three distillation losses share one compression pipeline; they differ only in the distillation training entry point. When `pool_path=init` in a script, Initialization (warm-up) is performed automatically.
+The three distillation losses share one image-representation pipeline; they differ only in the distillation training entry point. When `pool_path=init` in a script, Initialization (warm-up) is performed automatically.
 
 ### TM (default)
 TM first needs expert trajectories:
@@ -110,7 +108,7 @@ If this work is helpful to your research, please cite:
 
 ## Acknowledgement
 This implementation is built on top of the following works:
-- *C3: High-performance and low-complexity neural compression (Cool-Chic)* — compression backbone (latent + entropy network + decoder) — [Code](https://github.com/Orange-OpenSource/Cool-Chic)
+- *C3: High-performance and low-complexity neural compression (Cool-Chic)* — [Code](https://github.com/Orange-OpenSource/Cool-Chic)
 - *Frequency Domain-based Dataset Distillation (FreD)*, NeurIPS 2023 — [Code](https://github.com/sdh0818/FreD)
 - *Distilling Dataset into Neural Field (DDiF)*, ICLR 2025 — [Code](https://github.com/aailab-kaist/DDiF)
 - *Dataset Condensation with Gradient Matching / Distribution Matching* — [Code](https://github.com/VICO-UoE/DatasetCondensation)
