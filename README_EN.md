@@ -10,6 +10,18 @@ This repository is the official PyTorch implementation of the paper **Dataset Di
 <!-- ![Teaser image](overview.png) -->
 > We recast dataset distillation as a **rate-utility optimization** problem: a synthetic dataset is no longer stored as pixels, but parameterized in a neural image-compression fashion — each (group of) synthetic sample(s) is represented by a set of latent grids, an entropy network and a decoder (following the C3 design). Storage cost is measured in bits-per-pixel (bpp) and utility by downstream training accuracy; their trade-off is controlled by a coefficient λ. This parameterization is orthogonal to the distillation objective and can be uniformly combined with three losses: Trajectory Matching (TM), Gradient Matching (GM), and Distribution Matching (DM).
 
+## Repository structure
+```
+core/           shared library (one copy for all three methods): the TensorPool compression backbone (latent + entropy network + decoder) + utils and network definitions
+TM/             Trajectory Matching: distillation entry pool_tm.py + expert-trajectory generation buffer.py + scripts/
+DM/             Distribution Matching: distillation entry pool_dm.py + scripts/
+DC/             Gradient Matching (called GM in the paper): distillation entry pool_dc.py + scripts/
+quantize/       Stage 2 · post-quantization (shared by all three methods): quantize_pool.py + scripts/
+cross_eval/     Stage 3 · cross-architecture evaluation (shared): cross_evaluate.py + scripts/
+entropy_codec/  the actual bitstream encode/decode & rate analysis: encode_v2.py / decode_v2.py / analyze.py + scripts/
+```
+> The three distillation losses share one TensorPool compression pipeline; they differ only in the distillation entry point (`pool_*.py`). `quantize/` and `cross_eval/` are independent of the distillation method — a pool produced by any method can be used directly.
+
 ## Requirements
 ```
 conda env create -f TM/scripts/environment.yml

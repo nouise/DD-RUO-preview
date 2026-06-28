@@ -46,7 +46,8 @@ entropy_codec/bitstream_out/
 entropy_codec/decoded_out/
 entropy_codec/analysis_out/
 
-# Release checkpoints bundle (distributed via HuggingFace, not in repo)
+# Weights, logs & launch scripts — distributed via ModelScope (yiping03/dd-ruo0), not in repo
+checkpoints/
 checkpoints_release/
 
 # Local experiment data snapshot (not a stable interface)

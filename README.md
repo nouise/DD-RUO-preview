@@ -10,6 +10,18 @@
 <!-- ![Teaser image](overview.png) -->
 > 我们将数据集蒸馏重新建模为**率-效用（rate-utility）优化**问题：合成数据集不再以像素形式存储，而是用神经图像压缩的方式参数化——每个（组）合成样本由一组隐变量（latent grids）、一个熵网络与一个解码器表示（沿用 C3 的设计）。以每像素比特数（bpp）度量存储代价，以下游训练精度度量效用，二者的权衡由系数 λ 控制。该参数化与具体蒸馏目标正交，可统一搭配 Trajectory Matching (TM)、Gradient Matching (GM)、Distribution Matching (DM) 三种损失。
 
+## 代码结构
+```
+core/           共享库（三方法共用一份）：图像压缩主干 TensorPool（latent + 熵网络 + 解码器）+ 工具与网络定义
+TM/             Trajectory Matching：蒸馏训练入口 pool_tm.py + expert trajectory 生成 buffer.py + scripts/
+DM/             Distribution Matching：蒸馏训练入口 pool_dm.py + scripts/
+DC/             Gradient Matching（论文中称 GM）：蒸馏训练入口 pool_dc.py + scripts/
+quantize/       阶段二·后量化（三方法共享）：quantize_pool.py + scripts/
+cross_eval/     阶段三·多架构测评（三方法共享）：cross_evaluate.py + scripts/
+entropy_codec/  实际比特流编解码与码率分析：encode_v2.py / decode_v2.py / analyze.py + scripts/
+```
+> 三种蒸馏损失共享同一条 TensorPool 压缩链路，差异仅在蒸馏训练入口（`pool_*.py`）；`quantize/` 与 `cross_eval/` 与蒸馏方法无关，任意方法产出的 pool 都可直接使用。
+
 ## Requirements
 ```
 conda env create -f TM/scripts/environment.yml
