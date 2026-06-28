@@ -71,9 +71,14 @@ bash run_cross_eval.sh
 > 各阶段的超参数（β、λ、解码器结构、MSE 阈值、评估架构等）均在对应 bash 脚本顶部，请参照脚本注释填写。
 
 ## 预训练权重
-预训练的合成数据集可从 [HuggingFace](https://huggingface.co/nouise/DD-RUO) 下载，放入 `checkpoints/` 后可直接用于 Post-quantization 与 Evaluation。
+预训练的合成数据集、训练日志与启动脚本发布在 [ModelScope: yiping03/dd-ruo0](https://www.modelscope.cn/models/yiping03/dd-ruo0)。下载后放入 `checkpoints/` 即可直接用于 Post-quantization 与 Evaluation：
 
-> 注：当前为占位链接，正式权重发布后更新。
+```python
+from modelscope import snapshot_download
+snapshot_download('yiping03/dd-ruo0')
+```
+
+逐实验的真实启动脚本、日志位置与权重映射见 ModelScope 仓库内的 [`checkpoints_release/`](https://www.modelscope.cn/models/yiping03/dd-ruo0)。
 
 ## Citation
 如果本工作对你的研究有帮助，欢迎引用：
